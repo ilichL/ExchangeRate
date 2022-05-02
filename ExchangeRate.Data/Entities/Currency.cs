@@ -17,7 +17,6 @@ namespace ExchangeRate.Data.Entities
 
         public string BankName { get; set; }
         public DateTime CreationDate { get; set; }
-        public string CurrencycType { get; set; }//EUR RUB USD
         public Source Site { get; set; }
         public Guid SiteID { get; set; }
 
