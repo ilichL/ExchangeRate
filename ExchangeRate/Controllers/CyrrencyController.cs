@@ -2,11 +2,14 @@
 using ExchangeRate.Core.DTOs;
 using ExchangeRate.Core.Interfaces;
 using ExchangeRate.Core.Interfaces.Data;
+using ExchangeRate.Data.Entities;
+using ExchangeRate.Models;
 using ExchangeRate.Models.Currency;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace ExchangeRate.Controllers
 {
@@ -18,6 +21,7 @@ namespace ExchangeRate.Controllers
         private readonly IMapper mapper;
         private readonly ISourceService sourceService;
         private readonly ICyrrencyConfigurationService service;
+        private readonly ILogger<CyrrencyController> _logger;
 
         public CyrrencyController(
             IUnitOfWork _unitOfWork,
@@ -45,17 +49,71 @@ namespace ExchangeRate.Controllers
             return View(result);
         }
 
+        [HttpGet]
+        public IActionResult Delete(Guid id)
+        {
+            var deleteModel = new DeleteModel() { Id = id };
+            return View(deleteModel);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(DeleteModel model)
+        {
+            currencyService.DeleteAsync(model.Id);
+            return RedirectToAction("");//куда вернемсяпосле удаления
+        }
+
+        [HttpGet]
         public IActionResult Create()
         {
-
+            CurrencyDetailsModel model = new CurrencyDetailsModel();
+            return View(model);
         }
-
 
         [HttpPost]
-        public async Task<IActionResult> GetCyrrencyFromSource()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CurrencyDetailsModel model)
         {
-
+            try
+            {
+                if(!string.IsNullOrEmpty(model.BaseUrl))
+                {
+                    var source = await _unitOfWork.Sources.FindBy(a => a.BaseUrl.Equals(model.BaseUrl));
+                        //(source =>
+                        //source.Site.BaseUrl.Equals(model.BaseUrl));
+                    if (source != null)
+                    {
+                        var id = source.FirstOrDefault(a => a.Equals(model.BaseUrl));
+                        Currency cyr = new Currency()
+                        {
+                            EurBuy = model.EurBuy,
+                            EurSell = model.EurSell,
+                            RubBuy = model.RubBuy,
+                            RubSell = model.RubSell,
+                            UsdBuy = model.UsdBuy,
+                            UsdSell = model.UsdSell,
+                            BankName = model.BankName,
+                            CreationDate = DateTime.Now,
+                            SiteID = id.ID
+                        };
+                       await _unitOfWork.Currencies.Add(cyr);
+                       await _unitOfWork.Save();
+                       return RedirectToAction("");//вернемся к списку валют
+                    }
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return null;
+            }
+        }
+        [HttpGet]
+        public IActionResult Edit()
+        {
             return View();
         }
+
     }
 }
