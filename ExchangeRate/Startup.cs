@@ -20,7 +20,7 @@ namespace ExchangeRate
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                //.AddJsonFile("emailConfiguration.json")
+                .AddJsonFile("emailConfiguration.json")
                 .AddInMemoryCollection();
             //.AddTxtConfiguration("123");
 

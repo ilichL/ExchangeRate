@@ -10,7 +10,6 @@ namespace ExchangeRate.Core.Interfaces
     public interface ISourceService
     {
         public Task<IEnumerable<SourseGetDto>> GetRssUrlsAsync();
-        public Task<Guid> GetSourceByUrl(string url);
         public Task<IEnumerable<SourceDropDownDto>> GetSourcesForDropdownSelect();
     }
 }

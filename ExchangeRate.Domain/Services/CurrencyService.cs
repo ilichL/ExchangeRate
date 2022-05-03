@@ -40,11 +40,9 @@ namespace ExchangeRate.Domain.Services
             return result;
         }
 
-
-
         public async Task<int> DeleteAsync(Guid id)
         {
-            unitOfWork.Currencies.Delete(id);
+            await unitOfWork.Currencies.Delete(id);
             return await unitOfWork.Save();
         }
     }

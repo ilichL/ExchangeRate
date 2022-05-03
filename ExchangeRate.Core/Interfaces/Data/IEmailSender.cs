@@ -8,11 +8,7 @@ namespace ExchangeRate.Core.Interfaces.Data
 {
     public interface IEmailSender
     {
-        public Task<bool> SendEmailAsync(string subject, string email, string to);
+        public Task<bool> SendEmailAsync( string to);
     }
 }
-/*
-  subject - что мы отправляем
-  email - на какой имэйл ы отправляем
-  to - кому мы отправляем
- */
+

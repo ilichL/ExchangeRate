@@ -13,7 +13,7 @@ namespace ExchangeRate.Filters
 
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {//сделать проверку входа через другой девайс через другой сервис
-            await _emailSender.SendEmailAsync("1", "2", "3");//то, что мы будем отправлять ползователю
+            await _emailSender.SendEmailAsync("3");//то, что мы будем отправлять ползователю
             await next();
         }
 

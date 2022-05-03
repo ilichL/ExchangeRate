@@ -41,19 +41,6 @@ namespace ExchangeRate.Domain.Services
             }
         }
 
-        public async Task<Guid> GetSourceByUrl(string url)
-        {
-            var domain = string.Join(".",
-                new Uri(url).Host
-                    .Split('.')
-                    .TakeLast(2)
-                    .ToList());
-            return (await _unitOfWork.Sources.Get()
-                       .FirstOrDefaultAsync(source => source.BaseUrl.Equals(domain)))?.ID
-                   ?? Guid.Empty;
-
-        }
-
         public async Task<IEnumerable<SourceDropDownDto>> GetSourcesForDropdownSelect()
         {
             return await _unitOfWork.Sources.Get().Select(source => new SourceDropDownDto()

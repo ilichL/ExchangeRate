@@ -1,0 +1,59 @@
+﻿@using ExchangeRate.Models.Currency
+@model CurrencyDetailsModel
+
+@{
+    ViewBag.Title = "Create";//type="decimal"
+    Layout = "_Layout";// <input type="hidden" asp-for="Id"/>
+}
+<div class="container">
+    <h2>Create Cyrrency</h2>
+    <div class="row gx-5">
+        <form asp-controller="Cyrrency" asp-action="Create" asp-antiforgery="true" method="post">
+            <div>
+                
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="EurBuy"></label>
+                    <input class="form-control" asp-for="EurBuy">
+                </div>
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="EurSell"></label>
+                    <input class="form-control" asp-for="EurSell">
+                </div> 
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="RubBuy"></label>
+                    <input class="form-control" asp-for="RubBuy">
+                </div> 
+                 <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="RubSell"></label>
+                    <input class="form-control" asp-for="RubSell">
+                </div>
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="UsdBuy"></label>
+                    <input class="form-control" asp-for="UsdBuy">
+                </div> 
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="UsdSell"></label>
+                    <input class="form-control" asp-for="UsdSell">
+                </div> 
+
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="BankName"></label>
+                    <input class="form-control" asp-for="BankName">
+                </div> 
+
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="CreationDate"></label>
+                    <input type="datetime-local" class="form-control" asp-for="CreationDate">
+                </div>
+
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="BaseUrl"></label>
+                    <input class="form-control" asp-for="BaseUrl">
+                </div> 
+                <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <div/>
+            </div>
+        </form>
+    </div>
+</div>

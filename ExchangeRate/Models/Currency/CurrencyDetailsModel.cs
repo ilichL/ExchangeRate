@@ -1,19 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ExchangeRate.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExchangeRate.Models.Currency
 {
+            
+    // [CurrencyDetailsModelValidationAttribute]
     public class CurrencyDetailsModel
     {
         //для View Create
+
         [Required]
-        public Guid Id { get; set; }
+        public decimal EurBuy { get; set; }
         [Required]
-        [StringLength(50, MinimumLength = 3)]
-        public string Name { get; set; }
-        public decimal SalePrice { get; set; }
-        public decimal BuyPrice { get; set; }
+        public decimal EurSell { get; set; }
+        [Required]
+        public decimal RubBuy { get; set; }
+        [Required]
+        public decimal RubSell { get; set; }
+        [Required]
+        public decimal UsdBuy { get; set; }
+        [Required]
+        public decimal UsdSell { get; set; }
+        [Required]
         public string BankName { get; set; }
+        [Required]
         public DateTime CreationDate { get; set; }
-        public string SiteName;
+        [Required]
+        public string BaseUrl;
     }
 }

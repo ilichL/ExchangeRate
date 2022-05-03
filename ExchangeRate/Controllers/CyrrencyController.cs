@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace ExchangeRate.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class CyrrencyController : Controller
     {
         private readonly ICurrencyService currencyService;
@@ -66,21 +66,23 @@ namespace ExchangeRate.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            CurrencyDetailsModel model = new CurrencyDetailsModel();
+            CurrencyDetailsModel model = new CurrencyDetailsModel()
+            {
+                //Id = id
+            };
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CurrencyDetailsModel model)
         {
             try
             {
-                if(!string.IsNullOrEmpty(model.BaseUrl))
+                if (!string.IsNullOrEmpty(model.BaseUrl))
                 {
                     var source = await _unitOfWork.Sources.FindBy(a => a.BaseUrl.Equals(model.BaseUrl));
-                        //(source =>
-                        //source.Site.BaseUrl.Equals(model.BaseUrl));
+
                     if (source != null)
                     {
                         var id = source.FirstOrDefault(a => a.Equals(model.BaseUrl));
@@ -96,9 +98,9 @@ namespace ExchangeRate.Controllers
                             CreationDate = DateTime.Now,
                             SiteID = id.ID
                         };
-                       await _unitOfWork.Currencies.Add(cyr);
-                       await _unitOfWork.Save();
-                       return RedirectToAction("");//вернемся к списку валют
+                        await _unitOfWork.Currencies.Add(cyr);
+                        await _unitOfWork.Save();
+                        return RedirectToAction("");//вернемся к списку валют
                     }
                 }
                 return BadRequest();
@@ -110,10 +112,55 @@ namespace ExchangeRate.Controllers
             }
         }
         [HttpGet]
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit(Guid id)
         {
-            return View();
-        }
+            var cyr = await _unitOfWork.Currencies.GetById(id);
+            var source = await _unitOfWork.Sources.GetById(cyr.SiteID);
 
+            CurrencyDetailsModel model = new CurrencyDetailsModel()
+            {
+                EurBuy = cyr.EurBuy,
+                EurSell = cyr.EurSell,
+                RubBuy = cyr.RubBuy,
+                RubSell = cyr.RubSell,
+                UsdBuy = cyr.UsdBuy,
+                UsdSell = cyr.UsdSell,
+                BankName = cyr.BankName,
+                CreationDate = DateTime.Now,
+                BaseUrl = source.BaseUrl
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(CurrencyDetailsModel model)
+        {
+            if (!string.IsNullOrEmpty(model.BaseUrl))
+            {
+                var source = await _unitOfWork.Sources.FindBy(a => a.BaseUrl.Equals(model.BaseUrl));
+
+                if (source != null)
+                {
+                    var id = source.FirstOrDefault(a => a.Equals(model.BaseUrl));
+                    Currency cyr = new Currency()
+                    {
+                        EurBuy = model.EurBuy,
+                        EurSell = model.EurSell,
+                        RubBuy = model.RubBuy,
+                        RubSell = model.RubSell,
+                        UsdBuy = model.UsdBuy,
+                        UsdSell = model.UsdSell,
+                        BankName = model.BankName,
+                        CreationDate = DateTime.Now,
+                        SiteID = id.ID
+                    };
+                    await _unitOfWork.Currencies.Add(cyr);
+                    await _unitOfWork.Save();
+                    return RedirectToAction("");//вернемся к списку валют
+                }
+            }
+
+            return BadRequest();
+
+        }
     }
 }
