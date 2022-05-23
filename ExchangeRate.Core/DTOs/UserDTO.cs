@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 namespace ExchangeRate.Core.DTOs
 {
     public class UserDTO
-    {//доставать юзера вместе с ролями
-        public string Name { get; set; }
+    {
+        public Guid Id { get; set; }
         public string Email { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public string? NormalizedEmail { get; set; }
+
+        public string? PasswordHash { get; set; }
+
+        public DateTime? RegistrationDate { get; set; }
+
+        public string[] RoleNames { get; set; }
     }
 }

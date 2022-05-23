@@ -9,6 +9,7 @@ namespace ExchangeRate.Core.DTOs
     public class RssCurrencyDto
     {//правильные поля?
         public Guid ID { get; set; }
+        public Guid SiteID { get; set; }
         public decimal EurBuy { get; set; }
         public decimal EurSell { get; set; }
         public decimal RubBuy { get; set; }
@@ -16,6 +17,7 @@ namespace ExchangeRate.Core.DTOs
         public decimal UsdBuy { get; set; }
         public decimal UsdSell { get; set; }
         public string BankName { get; set; }
-        
+        public DateTime CreationDate { get; set; }
+
     }
 }

@@ -9,8 +9,8 @@ namespace ExchangeRate.Mappers
     {
         public CommentProfile()
         {
-            CreateMap<Comment, CommentsDTO>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
+            //CreateMap<Comment, CommentsDTO>()
+            //.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
 
 
         }

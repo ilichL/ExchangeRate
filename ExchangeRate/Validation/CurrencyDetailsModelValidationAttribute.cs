@@ -7,10 +7,6 @@ namespace ExchangeRate.Validation
     public class CurrencyDetailsModelValidationAttribute : ValidationAttribute
     {
         private readonly IUnitOfWork unitOfWork;
-        public CurrencyDetailsModelValidationAttribute()
-        {
-
-        }
         public override bool IsValid(object? value)
         {
             if (value is CurrencyDetailsModel model)

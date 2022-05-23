@@ -21,6 +21,7 @@ namespace ExchangeRate.DataAccess
         public IRepository<User> userRepository { get; }
         public ICurrencyRepository currencyRepository { get; }
         private readonly IRepository<UserRole> _userRoleRepository;
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
 
         public UnitOfWork(ICurrencyRepository productRepository, Context context,
             IRepository<User> users,
@@ -28,7 +29,8 @@ namespace ExchangeRate.DataAccess
             IRepository<Role> roles,
             ICurrencyRepository currencyRepository,
             IRepository<Source> sourceRepository,
-            IRepository<UserRole> _userRoleRepository)
+            IRepository<UserRole> _userRoleRepository,
+            IRepository<RefreshToken> refreshTokenRepository)
         {
             this.context = context;
             _repository = productRepository;
@@ -38,6 +40,7 @@ namespace ExchangeRate.DataAccess
             this.currencyRepository = currencyRepository;
             this.sourceRepository = sourceRepository;
             this._userRoleRepository = _userRoleRepository;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
 
@@ -52,6 +55,7 @@ namespace ExchangeRate.DataAccess
 
         public ICurrencyRepository Currencies => currencyRepository;
         public IRepository<UserRole> UserRoles => _userRoleRepository;
+        public IRepository<RefreshToken> RefreshTokens => _refreshTokenRepository;
 
         async Task<int> IUnitOfWork.Save()
         {

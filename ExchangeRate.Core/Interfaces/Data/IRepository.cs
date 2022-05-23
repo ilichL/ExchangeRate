@@ -25,6 +25,7 @@ namespace ExchangeRate.Core.Interfaces.Data
         public Task Update(T entity);//будет перезаписывать Product
         public Task СhangeAsync(Guid id, List<PatchModel> patchDtos);//изменим конкретные поля данной модели
         public Task Delete(Guid id);//удаление продукта по ID
+        public Task RemoveRange(Expression<Func<T, bool>> predicate);
         public void Dispose();//нкжен для освобождения оперативной памяти
     }
 }

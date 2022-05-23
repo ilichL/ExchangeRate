@@ -9,7 +9,7 @@ namespace ExchangeRate.Core.Interfaces
 {
     public interface IRssService
     {
-        public Task<RssCurrencyDto> GetCyrrencyAsync(SourseGetDto dto);
+        public RssCurrencyDto GetCyrrency(SourseGetDto dto);
         public Task<NacBankDto> GetNacBankAsync(SourseGetDto dto);
         public RssCurrencyDto GetCyrrencyPrior(SourseGetDto dto);
 

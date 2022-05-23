@@ -16,9 +16,10 @@ namespace ExchangeRate.Core.Interfaces.Data
 
         public IRepository<Source> Sources { get; }
         public IRepository<User> Users { get; }
-        IRepository<UserRole> UserRoles { get; }
+        public IRepository<UserRole> UserRoles { get; }
+        public IRepository<RefreshToken> RefreshTokens { get; }
 
-        Task<int> Save();
+        public Task<int> Save();
 
     }
 }

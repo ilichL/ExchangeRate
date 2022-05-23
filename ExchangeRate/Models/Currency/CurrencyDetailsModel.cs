@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ExchangeRate.Models.Currency
 {
             
-    // [CurrencyDetailsModelValidationAttribute]
+     [CurrencyDetailsModelValidationAttribute]
     public class CurrencyDetailsModel
     {
         //для View Create

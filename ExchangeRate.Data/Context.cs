@@ -11,6 +11,7 @@ namespace ExchangeRate.Data
         public DbSet<Source> Sites { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public Context(DbContextOptions<Context> options)
             : base(options)

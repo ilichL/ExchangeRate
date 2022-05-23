@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExchangeRate.Core.DTOs;
 
 namespace ExchangeRate.Domain.Services
 {
@@ -51,6 +52,38 @@ namespace ExchangeRate.Domain.Services
                     .Equals(normalizedEmail))).FirstOrDefaultAsync())?.ID;
         }
 
+        public async Task<UserDTO> GetUserById(Guid id)
+        {
+            return _mapper.Map<UserDTO>(await _unitOfWork.Users.GetById(id));
+
+        }
+
+        public async Task<UserDTO> GetUserByEmailAsync(string email)
+        {
+            var normalizedEmail = email.ToUpperInvariant();
+
+            var user = await _unitOfWork.Users
+                .Get()
+                .Where(user =>
+                    user.NormalizedEmail != null && user.NormalizedEmail
+                    .Equals(normalizedEmail))
+                .Include(user => user.UserRoles)
+                .ThenInclude(role => role.Role)
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<UserDTO>(user);
+        }
+
+        public async Task<UserDTO> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            var user = (await (await _unitOfWork.RefreshTokens
+                .FindBy(token => token.Token.Equals(refreshToken)))
+                .FirstOrDefaultAsync())
+                .User;
+
+            return _mapper.Map<UserDTO>(user);
+        }
+
         public async Task<Guid> CreateUserAsync(string modelName,string modelEmail)
         {
             var id = Guid.NewGuid();
@@ -58,7 +91,21 @@ namespace ExchangeRate.Domain.Services
             {
                 ID = id,
                 Email = modelEmail,
-                Name = modelName,
+                //Name = modelName,
+                NormalizedEmail = modelEmail.ToUpperInvariant(),
+                RegistrationDate = DateTime.Now
+            });
+            await _unitOfWork.Save();
+            return id;
+        }
+
+        public async Task<Guid> CreateUserAsync(string modelEmail)
+        {
+            var id = Guid.NewGuid();
+            await _unitOfWork.Users.Add(new User()
+            {
+                ID = id,
+                Email = modelEmail,
                 NormalizedEmail = modelEmail.ToUpperInvariant(),
                 RegistrationDate = DateTime.Now
             });

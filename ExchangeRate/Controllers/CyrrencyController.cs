@@ -2,6 +2,7 @@
 using ExchangeRate.Core.DTOs;
 using ExchangeRate.Core.Interfaces;
 using ExchangeRate.Core.Interfaces.Data;
+using ExchangeRate.Data;
 using ExchangeRate.Data.Entities;
 using ExchangeRate.Models;
 using ExchangeRate.Models.Currency;
@@ -19,24 +20,33 @@ namespace ExchangeRate.Controllers
         private readonly ICurrencyService currencyService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper mapper;
+        private readonly Context db;
         private readonly ISourceService sourceService;
+        //private readonly ISourceService sourceService;
         private readonly ICyrrencyConfigurationService service;
         private readonly ILogger<CyrrencyController> _logger;
+        private readonly IRssService rssService;
 
         public CyrrencyController(
-            IUnitOfWork _unitOfWork,
+            IUnitOfWork unitOfWork,
             ICurrencyService currencyService,
-            ICyrrencyConfigurationService service
+            ICyrrencyConfigurationService service,
+            ISourceService sourceService,
+            IRssService rssService,
+            Context db
             )
         {
-            this._unitOfWork = _unitOfWork;
+            this.rssService = rssService;
+            this.sourceService = sourceService;
+            this.db = db;
+            this._unitOfWork = unitOfWork;
             this.currencyService = currencyService;
             this.service = service;
         }
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var test = service.AggregateAllCyrrenciesAsync();
+            await service.AggregateAllCyrrenciesAsync();
             var cyrrency = (await currencyService.GetAllProductsAsync())
                 .Select(a => mapper.Map<CurrencyTableViewModel>(a))
                 .ToArray();
@@ -45,7 +55,14 @@ namespace ExchangeRate.Controllers
 
         public async Task<IActionResult> Test()
         {
-            var result = _unitOfWork.Sources.Get().ToArray();
+           
+            
+            var result = await _unitOfWork.Currencies.Get()
+                .OrderBy(source => source.ID)//сортируем по возрастанию id
+                .Select(a => mapper.Map<SourseGetDto>(a))
+                .ToListAsync();
+            //var result = service.AggregateAllCyrrenciesAsync();
+            //var result = _unitOfWork.Sources.Get().ToArray();
             return View(result);
         }
 

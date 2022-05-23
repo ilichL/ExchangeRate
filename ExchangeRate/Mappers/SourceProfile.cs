@@ -27,8 +27,10 @@ namespace ExchangeRate.Mappers
 
 
             CreateMap<RssCurrencyDto, Currency>()
+                .ForMember(dto => dto.ID,
+                    opt => opt.MapFrom(source => source.ID))
                 .ForMember(dto => dto.SiteID,
-                opt => opt.MapFrom(source => source.ID))
+                    opt => opt.MapFrom(source => source.SiteID))
                  .ForMember(dto => dto.EurBuy,
                     opt => opt.MapFrom(source => source.EurBuy))
                  .ForMember(dto => dto.EurSell,
@@ -43,9 +45,8 @@ namespace ExchangeRate.Mappers
                     opt => opt.MapFrom(source => source.UsdSell))
                 .ForMember(dto => dto.BankName,
                     opt => opt.MapFrom(source => source.BankName))
-
-                .ForMember(dto => dto.BankName,
-                    opt => opt.MapFrom(source => source.BankName));
+                .ForMember(dto => dto.CreationDate,
+                opt => opt.MapFrom(source => source.CreationDate));
 
 
             CreateMap<NacBankDto, Currency>()

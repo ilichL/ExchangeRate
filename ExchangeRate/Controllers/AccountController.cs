@@ -13,13 +13,16 @@ namespace ExchangeRate.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<AccountController> _logger;
         private readonly IAccountService _accountService;
+        private readonly IRoleService _roleService;
 
 
         public AccountController(IMapper mapper,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IAccountService accountService)
         {
             _mapper = mapper;
             _logger = logger;
+            _accountService = accountService;
         }
         [HttpGet]
         public async Task<IActionResult> Login(string? returnUrl)
@@ -83,14 +86,14 @@ namespace ExchangeRate.Controllers
             if (ModelState.IsValid)
             {
                 if (!await _accountService.CheckUserWithThatEmailIsExistAsync(model.Email))
-                {
-                    var userId = await _accountService.CreateUserAsync(model.Email, model.Name);
+                {//System.NullReferenceException: "Object reference not set to an instance of an object."
+                    var userId = await _accountService.CreateUserAsync(model.Name,model.Email);
                     await _accountService.SetRoleAsync(userId, "User");
                     await _accountService.SetPasswordAsync(userId, model.Password);
 
                     var claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.Name, model.Email),
+                        new Claim(ClaimTypes.Email, model.Email),
                         new Claim(ClaimTypes.Role, "User")
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, authenticationType: "Cookies");

@@ -1,5 +1,7 @@
-﻿@using ExchangeRate.Models.Currency
-@model CurrencyTableViewModel[]
+﻿<!--@using ExchangeRate.Models.Currency
+model CurrencyTableViewModel[]-->
+@using ExchangeRate.Data.Entities
+@model Currency
 
 
 <table border="1" width="100%">
@@ -18,20 +20,19 @@
     <td class="first">Покупка</td>
     <td class="first">Продажа</td>
   </tr>
-    @foreach (var item in Model)
-    {
+   
             	<tr>
-    	  <td rowspan="3" class="first">@item.BankName</td>
+    	  <td rowspan="3" class="first">@Model.BankName</td>
     	  <!-- Рубли -->
-    	  <td>@item.RubBuy</td>
-      	  <td>@item.RubSell</td>
+    	  <td>@Model.RubBuy</td>
+      	  <td>@Model.RubSell</td>
     	  <!-- Доллары-->
-    	  <td>@item.UsdBuy</td>
-    	  <td>@item.UsdSell</td>
+    	  <td>@Model.UsdBuy</td>
+    	  <td>@Model.UsdSell</td>
     	  <!-- Евро-->
-    	  <td>@item.EurBuy</td>
-    	  <td>@item.EurSell</td>
+    	  <td>@Model.EurBuy</td>
+    	  <td>@Model.EurSell</td>
 
-          <td>@item.CreationDate</td>
+          <td>CreationDate</td>
   	</tr>
-    }
+    

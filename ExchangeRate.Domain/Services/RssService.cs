@@ -26,7 +26,7 @@ namespace ExchangeRate.Domain.Services
             _db = db;
         }
 
-        public async Task<RssCurrencyDto> GetCyrrencyAsync(SourseGetDto dto)
+        public RssCurrencyDto GetCyrrency(SourseGetDto dto)
         {//для 1 банка
             try
             {
@@ -42,7 +42,8 @@ namespace ExchangeRate.Domain.Services
                             IFormatProvider format = new NumberFormatInfo { NumberDecimalSeparator = "." };
                             RssCurrencyDto rssCurrencyDto = new RssCurrencyDto()
                             {
-                                ID = dto.ID,
+                                ID = Guid.NewGuid(),
+                                SiteID = dto.ID,
                                 EurBuy = decimal.Parse
                                     (doc.DocumentNode.SelectNodes(dto.EurBuyNode).Single().InnerText, format),
                                 EurSell = decimal.Parse
@@ -56,6 +57,7 @@ namespace ExchangeRate.Domain.Services
                                 UsdSell = decimal.Parse
                                     (doc.DocumentNode.SelectNodes(dto.UsdSellNode).Single().InnerText, format),
                                 BankName = dto.BankName,
+                                CreationDate = DateTime.Now
                             };
                             return rssCurrencyDto;//тут лежат значения покупки и продажи
                         }//вывод, сохранение в бд
@@ -85,7 +87,8 @@ namespace ExchangeRate.Domain.Services
 
                 NacBankDto nacbank = new NacBankDto()
                 {
-                    ID = dto.ID,
+                    ID = Guid.NewGuid(),
+                    SiteID = dto.ID,
                     EurBuy = jObject[dto.EurBuyNode].Value<decimal>(),
                     RubBuy = jObject[dto.RubBuyNode].Value<decimal>(),
                     UsdBuy = jObject[dto.UsdBuyNode].Value<decimal>(),
@@ -106,9 +109,9 @@ namespace ExchangeRate.Domain.Services
             {
                 HtmlWeb web = new HtmlWeb();
                 HtmlDocument document = web.Load(dto.BaseUrl);
-                var eurcourse = document.DocumentNode.SelectSingleNode("//*[@id=\"currRatesEur\"]").InnerText;
-                var usdcourse = document.DocumentNode.SelectSingleNode("//*[@id=\"currRatesUsd\"]").InnerText;
-                var rubcourse = document.DocumentNode.SelectSingleNode("//*[@id=\"currRatesRub\"]").InnerText;
+                var eurcourse = document.DocumentNode.SelectSingleNode(dto.EurBuyNode).InnerText;
+                var usdcourse = document.DocumentNode.SelectSingleNode(dto.UsdBuyNode).InnerText;
+                var rubcourse = document.DocumentNode.SelectSingleNode(dto.RubBuyNode).InnerText;
 
                 Regex regex = new Regex(@"\d+\.*\d*");
                 MatchCollection matchesEUR = regex.Matches(eurcourse);
@@ -119,14 +122,16 @@ namespace ExchangeRate.Domain.Services
 
                 RssCurrencyDto result = new RssCurrencyDto()
                 {
-                    ID = dto.ID,
+                    ID = Guid.NewGuid(),
+                    SiteID = dto.ID,
                     EurBuy = decimal.Parse(matchesEUR[17].Value, formatter),
                     EurSell = decimal.Parse(matchesEUR[18].Value, formatter),
                     RubBuy = decimal.Parse(matchRUB[18].Value, formatter),
                     RubSell = decimal.Parse(matchRUB[20].Value, formatter),
                     UsdBuy = decimal.Parse(matchUSD[17].Value, formatter),
                     UsdSell = decimal.Parse(matchUSD[18].Value, formatter),
-                    BankName = dto.BankName
+                    BankName = dto.BankName,
+                    CreationDate = DateTime.Now
                 };
                 return result;
             }

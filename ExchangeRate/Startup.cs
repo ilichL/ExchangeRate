@@ -7,7 +7,6 @@ using ExchangeRate.Domain.Services;
 using ExchangeRate.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -46,6 +45,7 @@ namespace ExchangeRate
             services.AddScoped<IRepository<Role>, RoleRepository>();
             services.AddScoped<IRepository<UserRole>, UserRoleRepository>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+            services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
 
             services.AddScoped<IRssService, RssService>();//RssService в коре и в домэйне
             services.AddScoped<IEmailSender, EmailSenderService>();
@@ -54,9 +54,21 @@ namespace ExchangeRate
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ICyrrencyConfigurationService, CyrrencyConfigurationService>();
             //добавить хэндфаер
+            services.AddHangfire(configuration => configuration
+              .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+              .UseSimpleAssemblyNameTypeSerializer()
+              .UseRecommendedSerializerSettings()
+              .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"),
+              new SqlServerStorageOptions
+              {
+                  CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                  SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                  QueuePollInterval = TimeSpan.Zero,
+                  UseRecommendedIsolationLevel = true,
+                  DisableGlobalLocks = true
+              }));
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(opt =>
@@ -65,28 +77,11 @@ namespace ExchangeRate
                     opt.AccessDeniedPath = "/access-denied";
                 });
 
-
-            services.AddAuthentication();//перед авторизацией иначе не заработает
+            //services.AddAuthentication();//перед авторизацией иначе не заработает
             services.AddAuthorization();
             services.AddControllersWithViews();//подключение контроллеров с вьюхами(по умолчанию)
 
-
-     
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"),
-                new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
-
-            services.AddHangfireServer();
+            //services.AddHangfireServer();
 
             services.AddScoped<CustomFilter>();//подключение(регистрация) фильтра
 
@@ -127,7 +122,7 @@ namespace ExchangeRate
             app.UseHangfireDashboard();
             //hangfire
             //var rssService = serviceProvider.GetRequiredService<ICyrrencyConfigurationService>();//System.InvalidOperationException: "No service for type 'ExchangeRate.Domain.Services.CyrrencyConfigurationService' has been registered."
-           // RecurringJob.AddOrUpdate("Aggregation Cyrrencies from rss",
+           //RecurringJob.AddOrUpdate("Aggregation Cyrrencies from rss",
              //   () => rssService.AggregateAllCyrrenciesAsync(),
                // "5 21 */13 * MON-SUN");
                 

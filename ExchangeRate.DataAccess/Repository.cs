@@ -86,6 +86,13 @@ namespace ExchangeRate.DataAccess
             DbSet.Remove(await DbSet.FindAsync(id));
         }
 
+        public virtual async Task RemoveRange(Expression<Func<T, bool>> predicate)
+        {
+            var entities = DbSet.Where(predicate);
+
+            DbSet.RemoveRange(entities);
+        }
+
         public void Dispose()
         {//как работает описано в Unit Of Work
             context.Dispose();
